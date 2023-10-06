@@ -12,9 +12,9 @@ void loadImage();
 void saveImage();
 void BW();
 void invert();
-void merge();
+void mrg();
 void flip();
-void rotate();
+void rot();
 
 int main()
 {
@@ -37,6 +37,8 @@ int main()
               flip();
               break;
           case '5':
+              rot();
+              break;
           case '6':
           case '7':
           case '8':
@@ -126,7 +128,7 @@ void invert(){
 }
 
 //_________________________________________
-void merge(){
+void mrg(){
     unsigned char imageMerge[SIZE][SIZE];
     char imageFileName[100];
     cout << "Enter the image file name you to merge with: ";
@@ -163,8 +165,40 @@ void flip(){
 }
 
 //_________________________________________
-void rotate(){
-    
+void rot(){
+    cout<<"90/180/270 degrees";
+    int degree;
+    cin>>degree;
+    if (degree == 90){
+        for(int i = 0;i<SIZE;i++){
+        for(int j =0; j<SIZE;j++){
+        image[j][i] = image2[i][j];
+        }
+        }
+        reverse(begin(image),end(image));
+    }
+    else if(degree == 180){
+        for(int i = 0;i<SIZE;i++){
+        for(int j =0; j<SIZE;j++){
+        image[i][j] = image2[i][j];
+        }
+        }
+        reverse(begin(image),end(image));
+        for (int i =0; i<SIZE;i++){
+         reverse(begin(image[i]),end(image[i]));
+    }
+    }
+    else{
+        for(int i = 0;i<SIZE;i++){
+        for(int j =0; j<SIZE;j++){
+        image[j][i] = image2[i][j];
+        }
+        }
+        for (int i =0; i<SIZE;i++){
+         reverse(begin(image[i]),end(image[i]));
+
+        }
+    }
 }
 
 //_________________________________________
