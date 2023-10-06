@@ -13,51 +13,54 @@ void loadImage();
 void saveImage();
 void BW();
 void invert();
-void mrg();
+void mergeImage();
 void flip();
-void rot();
+void rotateImage();
+void DL();
 
 int main()
 {
-  cout << "Welcome to our image editing program\n";
-  loadImage();
-  menu();
-  char op;
-  while(cin >> op, op != '0'){
-      switch (op) {
-          case '1':
-              BW();
-              break;
-          case '2':
-              invert();
-              break;
-          case '3':
-              mrg();
-              break;
-          case '4':
-              flip();
-              break;
-          case '5':
-              rot();
-              break;
-          case '6':
-          case '7':
-          case '8':
-          case '9':
-          case 'a':
-          case 'b':
-          case 'c':
-          case 'd':
-          case 'e':
-          case 'f':
-          case 's':
-              saveImage();
-              break;
-      }
+    cout << "Welcome to our image editing program\n";
+    loadImage();
+    menu();
+    char op;
+    while(cin >> op, op != '0'){
+        switch (op) {
+            case '1':
+                BW();
+                break;
+            case '2':
+                invert();
+                break;
+            case '3':
+                mergeImage();
+                break;
+            case '4':
+                flip();
+                break;
+            case '5':
+                rotateImage();
+                break;
+            case '6':
+                DL();
+                break;
+            case '7':
+            case '8':
+            case '9':
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 's':
+                saveImage();
+                break;
+        }
 
-      menu();
-  }
-  return 0;
+        menu();
+    }
+    return 0;
 }
 
 //_________________________________________
@@ -67,8 +70,8 @@ void menu(){
     cout << "\t2-Invert Filter\n";
     cout << "\t3-Merge Filter \n";
     cout << "\t4-Flip Image\n";
-    cout << "\t5-Darken and Lighten Image \n";
-    cout << "\t6-Rotate Image\n";
+    cout << "\t5-Rotate Image\n";
+    cout << "\t6-Darken and Lighten Image\n";
     cout << "\t7-Detect Image Edges \n";
     cout << "\t8-Enlarge Image\n";
     cout << "\t9-Shrink Image\n";
@@ -84,20 +87,21 @@ void menu(){
 
 //_________________________________________
 void loadImage(){
-   char imageFileName[100];
-   cout << "Enter the image file name you want to edit: ";
-   cin >> imageFileName;
-   strcat (imageFileName, ".bmp");
-   readGSBMP(imageFileName, image);
+    char imageFileName[100];
+    cout << "Enter the image file name you want to edit: ";
+    cin >> imageFileName;
+    strcat (imageFileName, ".bmp");
+    readGSBMP(imageFileName, image);
+    readGSBMP(imageFileName, image2);
 }
 
 //_________________________________________
 void saveImage(){
-   char imageFileName[100];
-   cout << "Enter the target image file name: ";
-   cin >> imageFileName;
-   strcat (imageFileName, ".bmp");
-   writeGSBMP(imageFileName, image);
+    char imageFileName[100];
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image);
 }
 
 //_________________________________________
@@ -129,7 +133,7 @@ void invert(){
 }
 
 //_________________________________________
-void mrg(){
+void mergeImage(){
     unsigned char imageMerge[SIZE][SIZE];
     char imageFileName[100];
     cout << "Enter the image file name you to merge with: ";
@@ -154,50 +158,60 @@ void flip(){
     else if(dir == 'v'){
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE/2; ++j) {
-                swap(image[i][j], image[i][SIZE-j-1]);
+                swap(image[i][j], image2[i][SIZE-j-1]);
             }
         }
-    }
-    else{
-        cout << "Invalid input!\n";
-        flip();
-        return;
     }
 }
 
 //_________________________________________
-void rot(){
-    cout<<"90/180/270 degrees";
+void rotateImage(){
     int degree;
-    cin>>degree;
-    if (degree == 90){
-        for(int i = 0;i<SIZE;i++){
-        for(int j =0; j<SIZE;j++){
-        image[j][i] = image2[i][j];
+    cout << "Rotate (90), (180) or (270) degrees\n";
+    cin >> degree;
+    if(degree == 90) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = image2[j][SIZE-i-1];
+            }
         }
-        }
-        reverse(begin(image),end(image));
     }
     else if(degree == 180){
-        for(int i = 0;i<SIZE;i++){
-        for(int j =0; j<SIZE;j++){
-        image[i][j] = image2[i][j];
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = image2[SIZE-i-1][SIZE-j-1];
+            }
         }
-        }
-        reverse(begin(image),end(image));
-        for (int i =0; i<SIZE;i++){
-         reverse(begin(image[i]),end(image[i]));
     }
+    else if(degree == 270){
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = image2[SIZE-j-1][i];
+            }
+        }
     }
-    else{
-        for(int i = 0;i<SIZE;i++){
-        for(int j =0; j<SIZE;j++){
-        image[j][i] = image2[i][j];
-        }
-        }
-        for (int i =0; i<SIZE;i++){
-         reverse(begin(image[i]),end(image[i]));
+}
 
+//_________________________________________
+void DL(){
+    char brightness;
+    cout << "Do you want to darken(d) or lighten(l)?\n";
+    cin >> brightness;
+    if(brightness == 'd'){
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j] = image[i][j]/2;
+            }
+        }
+    }
+    else if(brightness == 'l'){
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                if(1.5*image[i][j] < 255)
+                    image[i][j] += image[i][j]/2;
+                else
+                    image[i][j] = 255;
+            }
         }
     }
 }
