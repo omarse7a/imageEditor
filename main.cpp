@@ -5,6 +5,7 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
+unsigned char image2[SIZE][SIZE];
 
 
 void menu();
@@ -31,7 +32,7 @@ int main()
               invert();
               break;
           case '3':
-              merge();
+              mrg();
               break;
           case '4':
               flip();
