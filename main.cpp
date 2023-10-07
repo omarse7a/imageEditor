@@ -1,4 +1,13 @@
-#include <iostream> //sdfsf
+// FCAI – OOP Programming – 2023 - Assignment 1
+// Program Name:    main.cpp
+// Last Modification Date:	7/10/2023
+// Author1 and ID and Group:	Omar Sameh / 20220224
+// Author2 and ID and Group:	Mohamed Hisham / 20220310
+// Author3 and ID and Group:	Seif Eldin Ahmed Elkammar / 20220468
+// Teaching Assistant:		xxxxx xxxxx
+// Purpose:..........
+
+#include <iostream>
 #include <cstring>
 #include <algorithm>
 #include "bmplib.cpp"
