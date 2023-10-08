@@ -13,8 +13,8 @@
 #include "bmplib.cpp"
 
 using namespace std;
-unsigned char image[SIZE][SIZE];
-unsigned char image2[SIZE][SIZE];
+unsigned char image[SIZE][SIZE];    //primary image
+unsigned char image2[SIZE][SIZE];   //spare image(for editing)
 
 
 void menu();
@@ -26,6 +26,9 @@ void mergeImage();
 void flip();
 void rotateImage();
 void DL();
+void detectEdge();  //msh sha8ala
+void enlarge();
+void shrink();
 
 int main()
 {
@@ -54,8 +57,14 @@ int main()
                 DL();
                 break;
             case '7':
+                detectEdge(); //msh sha8ala
+                break;
             case '8':
+                enlarge();
+                break;
             case '9':
+                shrink();
+                break;
             case 'a':
             case 'b':
             case 'c':
@@ -225,6 +234,88 @@ void DL(){      //This function manipulates the brightness
                     image[i][j] += image[i][j]/2;
                 else
                     image[i][j] = 255;
+            }
+        }
+    }
+}
+
+//_________________________________________
+void detectEdge(){            //msh sha8ala
+    for (int i = 1; i < SIZE-1; ++i) {
+        for (int j = 1; j < SIZE-1; ++j) {
+            int brightDiffX = abs(image[i][j-1] - image[i][j+1]);
+            int brightDiffY = abs(image[i-1][j] - image[i+1][j]);
+            if(brightDiffX + brightDiffY > 256)
+                image[i][j] = 0;
+            else
+                image[i][j] = 255;
+        }
+    }
+}
+
+//_________________________________________
+void enlarge(){     //Enlarge the pixel by repeating it four times in the image array
+    int quarter;
+    cout << "Select a quarter to enlarge first(1), second(2), third(3), fourth(4)\n";
+    cin >> quarter;
+    if(quarter == 1) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {       //indices i/2 and j/2 to get the first quarter only
+                image[i][j] = image2[i/2][j/2];    //and repeating the same pixel twice in each row
+            }                                      //and repeating it twice in each column
+        }
+    }
+    else if(quarter == 2){
+        for (int i = 0; i < SIZE; ++i) {        //indices i/2 and SIZE/2 + j/2 to get the second quarter only
+            for (int j = 0; j < SIZE; ++j) {        //and repeating the same pixel twice in each row
+                image[i][j] = image2[i/2][SIZE/2 + j/2]; //and repeating it twice in each column
+            }
+        }
+    }
+    else if(quarter == 3){
+        for (int i = 0; i < SIZE; ++i) {        //indices SIZE/2 + i/2 and j/2 to get the third quarter only
+            for (int j = 0; j < SIZE; ++j) {        //and repeating the same pixel twice in each row
+                image[i][j] = image2[SIZE/2 + i/2][j/2];    //and repeating it twice in each column
+            }
+        }
+    }
+    else if(quarter == 4){
+        for (int i = 0; i < SIZE; ++i) {        //indices SIZE/2 + i/2 and SIZE/2 + j/2 to get the fourth quarter only
+            for (int j = 0; j < SIZE; ++j) {        //and repeating the same pixel twice in each row
+                image[i][j] = image2[SIZE/2 + i/2][SIZE/2 + j/2];   //and repeating it twice in each column
+            }
+        }
+    }
+}
+
+//_________________________________________
+void shrink(){      //Shrink image by skipping pixels
+    int scale;
+    cout << "Shrink to half(1), third(2) or quarter(3) it's original dimensions?\n";
+    cin >> scale;
+    for (int i = 0; i < SIZE; ++i) {        //making the primary image all white
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][j] = 255;
+        }
+    }
+    if(scale == 1){
+        for (int i = 0; i < SIZE; i+=2) {       //shrink to half its original dimensions
+            for (int j = 0; j < SIZE; j+=2) {   //for each pixel of the original image we put
+                image[i/2][j/2] = image2[i][j]; //a pixel in shrunk image and skip the next
+            }
+        }
+    }
+    else if(scale == 2){
+        for (int i = 0; i < SIZE; i+=3) {       //shrink to third its original dimensions
+            for (int j = 0; j < SIZE; j+=3) {   //for each pixel of the original image we put
+                image[i/3][j/3] = image2[i][j]; //a pixel in shrunk image and skip the next two pixels
+            }
+        }
+    }
+    else if(scale == 3){
+        for (int i = 0; i < SIZE; i+=4) {       //shrink to quarter its original dimensions
+            for (int j = 0; j < SIZE; j+=4) {   //for each pixel of the original image we put
+                image[i/4][j/4] = image2[i][j]; //a pixel in shrunk image and skip the next three pixels
             }
         }
     }
