@@ -29,6 +29,7 @@ void DL();
 void detectEdge();  //msh sha8ala
 void enlarge();
 void shrink();
+void mirror();
 
 int main()
 {
@@ -66,6 +67,8 @@ int main()
                 shrink();
                 break;
             case 'a':
+                mirror();
+                break;
             case 'b':
             case 'c':
             case 'd':
@@ -322,3 +325,41 @@ void shrink(){      //Shrink image by skipping pixels
 }
 
 //_________________________________________
+void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
+    cout<<"left  or right or upper or lower";
+    string side;
+    cin>>side;
+    if(side=="left"){
+        for (int i = 0; i < SIZE; ++i) {//we put the first half of the image in image1 and then put the first half of the image again in the second half of image1.
+            for (int j = 0; j < SIZE / 2; ++j) {
+                image[i][j] = image2[i][j];
+                image[i][255 - j] = image2[i][j];
+            }
+        }
+    }
+    else if(side=="right"){//Here we did the same thing, but in reverse.
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = SIZE/2; j < SIZE; ++j) {
+                image[i][j] = image2[i][j];
+                image[i][255 - j] = image2[i][j];
+            }
+        }
+    }
+    else if(side=="upper"){
+        for (int i = 0; i < SIZE/2; ++i) {//here we need the upper half of i indices
+            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
+                image[i][j] = image2[i][j];//
+                image[255-i] [j] = image2[i][j];
+            }
+        }
+
+    }
+    else
+        for (int i = SIZE/2; i < SIZE; ++i) {//here we need the lower half of the image
+            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image.
+                image[i][j] = image2[i][j];
+                image[255-i][j] = image2[i][j];
+            }
+        }
+}
+//______________________________________________________________________
