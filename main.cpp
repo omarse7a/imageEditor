@@ -30,6 +30,7 @@ void detectEdge();  //msh sha8ala
 void enlarge();
 void shrink();
 void mirror();
+void blur();
 
 int main()
 {
@@ -71,6 +72,8 @@ int main()
                 break;
             case 'b':
             case 'c':
+                blur();
+                break;
             case 'd':
             case 'e':
             case 'f':
@@ -326,7 +329,7 @@ void shrink(){      //Shrink image by skipping pixels
 
 //_________________________________________
 void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
-    cout<<"left  or right or upper or lower";
+    cout<<"left  or right or upper or lower\n";
     string side;
     cin>>side;
     if(side=="left"){
@@ -363,3 +366,12 @@ void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left
         }
 }
 //______________________________________________________________________
+void blur(){//here we take the average of the 9 indices and put it in the middle index
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][j]=(image[i-1][j]+image[i+1][j]+image[i][j-1]
+                    +image[i][j+1]+image[i][j]+image[i-2][j]+image[i+2][j]+image[i][j-2]+image[i][j+2])/9;
+        }
+    }
+
+}
