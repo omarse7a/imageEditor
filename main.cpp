@@ -26,7 +26,7 @@ void mergeImage();
 void flip();
 void rotateImage();
 void DL();
-void detectEdge();  //msh sha8ala
+void detectEdge();
 void enlarge();
 void shrink();
 void mirror();
@@ -59,7 +59,7 @@ int main()
                 DL();
                 break;
             case '7':
-                detectEdge(); //msh sha8ala
+                detectEdge();
                 break;
             case '8':
                 enlarge();
@@ -246,12 +246,12 @@ void DL(){      //This function manipulates the brightness
 }
 
 //_________________________________________
-void detectEdge(){            //msh sha8ala
+void detectEdge(){
     for (int i = 1; i < SIZE-1; ++i) {
-        for (int j = 1; j < SIZE-1; ++j) {
-            int brightDiffX = abs(image[i][j-1] - image[i][j+1]);
-            int brightDiffY = abs(image[i-1][j] - image[i+1][j]);
-            if(brightDiffX + brightDiffY > 256)
+        for (int j = 1; j < SIZE - 1; ++j) {
+            int brightDiffX = abs(image[i][j] - image[i][j+1]);
+            int brightDiffY = abs(image[i][j] - image[i+1][j]);
+            if (brightDiffX > 45 || brightDiffY > 45)
                 image[i][j] = 0;
             else
                 image[i][j] = 255;
@@ -328,15 +328,15 @@ void shrink(){      //Shrink image by skipping pixels
 }
 
 //_________________________________________
-void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
-    cout<<"left  or right or upper or lower\n";
+void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
+    cout << "left, right, upper or lower\n";
     string side;
-    cin>>side;
-    if(side=="left"){
-        for (int i = 0; i < SIZE; ++i) {//we put the first half of the image in image1 and then put the first half of the image again in the second half of image1.
-            for (int j = 0; j < SIZE / 2; ++j) {
+    cin >> side;
+    if(side == "left"){
+        for (int i = 0; i < SIZE; ++i) {        //we put the first half of the image in image1
+            for (int j = 0; j < SIZE / 2; ++j) {    // then put the first half of the image again in the second half of image1.
                 image[i][j] = image2[i][j];
-                image[i][255 - j] = image2[i][j];
+                image[i][SIZE-j] = image2[i][j];
             }
         }
     }
@@ -344,7 +344,7 @@ void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left
         for (int i = 0; i < SIZE; ++i) {
             for (int j = SIZE/2; j < SIZE; ++j) {
                 image[i][j] = image2[i][j];
-                image[i][255 - j] = image2[i][j];
+                image[i][SIZE - j] = image2[i][j];
             }
         }
     }
@@ -352,26 +352,25 @@ void mirror(){//This filter mirrors 1/2 of the image as seen here in order: Left
         for (int i = 0; i < SIZE/2; ++i) {//here we need the upper half of i indices
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
                 image[i][j] = image2[i][j];//
-                image[255-i] [j] = image2[i][j];
+                image[SIZE-i] [j] = image2[i][j];
             }
         }
 
     }
     else
         for (int i = SIZE/2; i < SIZE; ++i) {//here we need the lower half of the image
-            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image.
+            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
                 image[i][j] = image2[i][j];
-                image[255-i][j] = image2[i][j];
+                image[SIZE-i][j] = image2[i][j];
             }
         }
 }
 //______________________________________________________________________
-void blur(){//here we take the average of the 9 indices and put it in the middle index
+void blur(){//The blur filter takes the average of the 9 pixels and put it in the middle pixel
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            image[i][j]=(image[i-1][j]+image[i+1][j]+image[i][j-1]
-                    +image[i][j+1]+image[i][j]+image[i-2][j]+image[i+2][j]+image[i][j-2]+image[i][j+2])/9;
+            image[i][j]=(image[i-1][j] + image[i+1][j] + image[i][j-1] + image[i][j+1] + image[i][j]
+                    + image[i-2][j] + image[i+2][j] + image[i][j-2] + image[i][j+2]) / 9;
         }
     }
-
 }
