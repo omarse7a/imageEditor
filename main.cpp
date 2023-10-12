@@ -1,9 +1,9 @@
 // FCAI – OOP Programming – 2023 - Assignment 1
-// Program Name:    main.cpp
+// Program Name: Image Editor
 // Last Modification Date:	7/10/2023
-// Author1 and ID and Group:	Omar Sameh / 20220224
-// Author2 and ID and Group:	Mohamed Hisham / 20220310
-// Author3 and ID and Group:	Seif Eldin Ahmed Elkammar / 20220468
+// Author1 and ID and Group:	Omar Sameh Mohamed / 20220224 / omar.seha90@gmail.com
+// Author2 and ID and Group:	Mohamed Hisham Zidan / 20220310 / mohamedzidan783@gmail.com
+// Author3 and ID and Group:	Seif Eldin Ahmed Elkammar / 20220468 / seif_elkammar@hotmail.com
 // Teaching Assistant:		xxxxx xxxxx
 // Purpose:..........
 
@@ -30,6 +30,7 @@ void detectEdge();
 void enlarge();
 void shrink();
 void mirror();
+void shuffle();
 void blur();
 
 int main()
@@ -71,6 +72,8 @@ int main()
                 mirror();
                 break;
             case 'b':
+                shuffle();
+                break;
             case 'c':
                 blur();
                 break;
@@ -80,6 +83,8 @@ int main()
             case 's':
                 saveImage();
                 break;
+            default:
+                cout << "Invalid input, Try again\n";
         }
 
         menu();
@@ -89,7 +94,7 @@ int main()
 
 //_________________________________________
 void menu(){
-    cout << "select a filter to apply or 0 to exit:\n";
+    cout << "\nselect a filter to apply or 0 to exit:\n";
     cout << "\n\t1-Black & White Filter\n";
     cout << "\t2-Invert Filter\n";
     cout << "\t3-Merge Filter \n";
@@ -126,6 +131,7 @@ void saveImage(){   //This function is used to save the image after implementing
     cin >> imageFileName;
     strcat (imageFileName, ".bmp");
     writeGSBMP(imageFileName, image);
+    cout << "Save successfully\n";
 }
 
 //_________________________________________
@@ -246,13 +252,13 @@ void DL(){      //This function manipulates the brightness
 }
 
 //_________________________________________
-void detectEdge(){
+void detectEdge(){      //This function detect the edges of every object in the image
     for (int i = 1; i < SIZE-1; ++i) {
         for (int j = 1; j < SIZE - 1; ++j) {
-            int brightDiffX = abs(image[i][j] - image[i][j+1]);
-            int brightDiffY = abs(image[i][j] - image[i+1][j]);
-            if (brightDiffX > 45 || brightDiffY > 45)
-                image[i][j] = 0;
+            int brightDiffX = abs(image[i][j] - image[i][j+1]); //the brightness difference on x-axis
+            int brightDiffY = abs(image[i][j] - image[i+1][j]); //the brightness difference on y-axis
+            if (brightDiffX > 45 || brightDiffY > 45)   // checking if the pixel is an edge by brightness difference
+                image[i][j] = 0;                        //(45 is not a special number it just gives the best results)
             else
                 image[i][j] = 255;
         }
@@ -329,10 +335,10 @@ void shrink(){      //Shrink image by skipping pixels
 
 //_________________________________________
 void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
-    cout << "left, right, upper or lower\n";
-    string side;
+    cout << "Mirror left(l), right(r), upper(u), down(d)\n";
+    char side;
     cin >> side;
-    if(side == "left"){
+    if(side == 'l'){
         for (int i = 0; i < SIZE; ++i) {        //we put the first half of the image in image1
             for (int j = 0; j < SIZE / 2; ++j) {    // then put the first half of the image again in the second half of image1.
                 image[i][j] = image2[i][j];
@@ -340,7 +346,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
             }
         }
     }
-    else if(side=="right"){//Here we did the same thing, but in reverse.
+    else if(side == 'r'){//Here we did the same thing, but in reverse.
         for (int i = 0; i < SIZE; ++i) {
             for (int j = SIZE/2; j < SIZE; ++j) {
                 image[i][j] = image2[i][j];
@@ -348,7 +354,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
             }
         }
     }
-    else if(side=="upper"){
+    else if(side == 'u'){
         for (int i = 0; i < SIZE/2; ++i) {//here we need the upper half of i indices
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
                 image[i][j] = image2[i][j];//
@@ -365,12 +371,85 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
             }
         }
 }
+
 //______________________________________________________________________
-void blur(){//The blur filter takes the average of the 9 pixels and put it in the middle pixel
+void shuffle(){     //shuffle function is used to display the image quarters in any order
+    int order, pos = 1;
+    cout << "Enter the new order of quarters?\n";
+    while(pos <= 4) {   //looping on every quarter
+        cin >> order;   //if the order is equal to pos, then leave the quarter as it is
+        if(pos == 1){ //first quarter
+            for (int i = 0; i < SIZE/2; ++i) {
+                for (int j = 0; j < SIZE/2; ++j) {
+                    if(order == 2){
+                        image[i][j] = image2[i][SIZE/2 + j];    //replacing the first quarter with the second
+                    }
+                    else if(order == 3){
+                        image[i][j] = image2[SIZE/2 + i][j];    //replacing the first quarter with the third
+                    }
+                    else if(order == 4){
+                        image[i][j] = image2[SIZE/2 + i][SIZE/2 + j];   //replacing the first quarter with the fourth
+                    }
+                }
+            }
+        }
+        else if(pos == 2){ //second quarter
+            for (int i = 0; i < SIZE/2; ++i) {
+                for (int j = SIZE/2; j < SIZE; ++j) {
+                    if(order == 1){
+                        image[i][j] = image2[i][j - SIZE/2];    //replacing the second quarter with the first
+                    }
+                    else if(order == 3){
+                        image[i][j] = image2[SIZE/2 + i][j - SIZE/2];   //replacing the second quarter with the third
+                    }
+                    else if(order == 4){
+                        image[i][j] = image2[SIZE/2 + i][j];    //replacing the second quarter with the fourth
+                    }
+                }
+            }
+        }
+        else if(pos == 3){  //third quarter
+            for (int i = SIZE/2; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE/2; ++j) {
+                    if(order == 1){
+                        image[i][j] = image2[i - SIZE/2][j];    //replacing the third quarter with the first
+                    }
+                    else if(order == 2){
+                        image[i][j] = image2[i - SIZE/2][SIZE/2 + j];   //replacing the third quarter with the second
+                    }
+                    else if(order == 4){
+                        image[i][j] = image2[i][SIZE/2 + j];    //replacing the third quarter with the fourth
+                    }
+                }
+            }
+        }
+        else{   //fourth quarter
+            for (int i = SIZE/2; i < SIZE; ++i) {
+                for (int j = SIZE/2; j < SIZE; ++j) {
+                    if(order == 1){
+                        image[i][j] = image2[i - SIZE/2][j - SIZE/2];   //replacing the fourth quarter with the first
+                    }
+                    else if(order == 2){
+                        image[i][j] = image2[i - SIZE/2][j];    //replacing the fourth quarter with the second
+                    }
+                    else if(order == 3){
+                        image[i][j] = image2[i][j - SIZE/2];    //replacing the fourth quarter with the third
+                    }
+                }
+            }
+        }
+        pos++;
+    }
+}
+
+//______________________________________________________________________
+void blur(){    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             image[i][j]=(image[i-1][j] + image[i+1][j] + image[i][j-1] + image[i][j+1] + image[i][j]
-                    + image[i-2][j] + image[i+2][j] + image[i][j-2] + image[i][j+2]) / 9;
+                         + image[i-2][j] + image[i+2][j] + image[i][j-2] + image[i][j+2]) / 9;
         }
     }
 }
+
+//______________________________________________________________________
