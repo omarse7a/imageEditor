@@ -463,8 +463,8 @@ void crop(){//here we crop part of the image and make the rest white.
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             image[i][j]=255;    //here I made the whole image white first.
-            if(i>=x&&l+x>i&&j>=y&&w+y>j)    //first&third conditions to make the image white tell i,j come to the x,y positions
-                image[i][j]=image2[i][j];   // second & last conditions to end  putting the indices from image2 in image.
+            if(i >= x && l+x > i && j >= y && w+y > j)    //first&third conditions to make the image white tell i,j come to the x,y positions
+                image[i][j]=image2[i][j];   //second & last conditions to put the pixels from image2 in image.
         }
     }
 }

@@ -1,27 +1,27 @@
-// Program: demo2.cpp
-// Purpose: Demonstrate use of bmplip for handling
-//          bmp colored and grayscale images
-//          Program load a gray image and store in another file
-// Author:  Mohammad El-Ramly
-// Date:    30 March 2018
-// Version: 1.0
-
 #include <iostream>
 #include <cstring>
 #include "bmplib.cpp"
 #include <algorithm>
+
 using namespace std;
-unsigned char image[SIZE][SIZE][RGB];
-unsigned char image2[SIZE][SIZE][RGB];
+
+unsigned char image[SIZE][SIZE][RGB];   //primary image
+unsigned char image2[SIZE][SIZE][RGB];  //spare image(for editing)
+
+
 void menu();
 void loadImage();
 void saveImage();
 void BW();
 void invert();
-void merge();
+void mergeImage();
 void flip();
+void rotateImage();
+void DL();
 void blur();
 void crop();
+
+
 int main()
 {
     cout << "Welcome to our image editing program\n";
@@ -37,13 +37,17 @@ int main()
                 invert();
                 break;
             case '3':
-                merge();
+                mergeImage();
                 break;
             case '4':
                 flip();
                 break;
             case '5':
+                rotateImage();
+                break;
             case '6':
+                DL();
+                break;
             case '7':
             case '8':
             case '9':
@@ -51,8 +55,10 @@ int main()
             case 'b':
             case 'c':
                 blur();
+                break;
             case 'd':
                 crop();
+                break;
             case 'e':
             case 'f':
             case 's':
@@ -90,31 +96,23 @@ void menu(){
 }
 
 //_________________________________________
-void loadImage () {
+void loadImage(){   //This function is used to load the primary RGB image and a spare RGB image for editing
     char imageFileName[100];
-
-    // Get gray scale image file name
     cout << "Enter the image file name you want to edit: ";
     cin >> imageFileName;
-
-    // Add to it .bmp extension and load image
     strcat (imageFileName, ".bmp");
-    readRGBBMP(imageFileName, image);
-    readRGBBMP(imageFileName, image2);
-
+    readRGBBMP(imageFileName, image); //load the image into a 3D array
+    readRGBBMP(imageFileName, image2);  //load the image into a 3D array
 }
 
 //_________________________________________
-void saveImage () {
+void saveImage(){   //This function is used to save the RGB image after implementing filters in a new file
     char imageFileName[100];
-
-    // Get gray scale image target file name
     cout << "Enter the target image file name: ";
     cin >> imageFileName;
-
-    // Add to it .bmp extension and load image
     strcat (imageFileName, ".bmp");
-    writeRGBBMP(imageFileName, image);
+    writeRGBBMP(imageFileName, image);   //save the 3D array into an image
+    cout << "Save successfully\n";
 }
 
 //_________________________________________
@@ -153,7 +151,7 @@ void invert(){
 }
 
 //_________________________________________
-void merge(){
+void mergeImage(){
     unsigned char imageMrg[SIZE][SIZE][RGB];
     char imageFileName[100];
     cout << "Enter the image file name you to merge with: ";
@@ -187,30 +185,93 @@ void flip() { //This function flips the image horizontally or vertically
         }
     }
 }
+
+//____________________________________________
+void rotateImage(){ //This function rotates the image by a given degrees
+    int degree;
+    cout << "Rotate (90), (180) or (270) degrees\n";
+    cin >> degree;
+    if(degree == 90) {
+        for (int i = 0; i < SIZE; ++i) {    //replacing each row(starting from first row) with the corresponding column(starting from last column)
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][j][k] = image2[j][SIZE-i-1][k];
+                }
+            }
+        }
+    }
+    else if(degree == 180){     //replacing each row(starting from first row) with the reversed corresponding row(starting from last row)
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][j][k] = image2[SIZE-i-1][SIZE-j-1][k];
+                }
+            }
+        }
+    }
+    else if(degree == 270){     //replacing each row(starting from first row) with the reversed corresponding column(starting from first column)
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][j][k] = image2[SIZE-j-1][i][k];
+                }
+            }
+        }
+    }
+}
+
+//___________________________________________
+void DL(){      //This function manipulates the brightness
+    char brightness;
+    cout << "Do you want to darken(d) or lighten(l)?\n";
+    cin >> brightness;
+    if(brightness == 'd'){      //decrease the brightness of each pixel to 50% of the original;
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][j][k] = image[i][j][k]/2;
+                }
+            }
+        }
+    }
+    else if(brightness == 'l'){     //if 150% of the original brightness > white(255) make it white
+        for (int i = 0; i < SIZE; ++i) {    // else increase the brightness by 50%
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    if(1.5*image[i][j][k] < 255)
+                        image[i][j][k] += image[i][j][k] / 2;
+                    else
+                        image[i][j][k] = 255;
+                }
+            }
+        }
+    }
+}
+
 //___________________________________________
 void blur() {    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
 
-                image[i][j][k] = (image[i - 1][j][k]+ image[i + 1][j][k] + image[i][j - 1][k] + image[i][j + 1] [k]+ image[i][j][k]
-                                  + image[i - 2][j][k] + image[i + 2][j][k] + image[i][j - 2][k] + image[i][j + 2][k]) /9;
+                image[i][j][k] = (image[i - 1][j][k]+ image[i + 1][j][k] + image[i][j - 1][k] + image[i][j + 1][k] + image[i][j][k]
+                                  + image[i - 2][j][k] + image[i + 2][j][k] + image[i][j - 2][k] + image[i][j + 2][k]) / 9;
             }
         }
     }
 }
-//_____________________________________________
+
+//____________________________________________
 void crop() {
-    cout << "Please enter x, y, l, w\n";
+    cout << "Please enter coordinates (x, y) and length(l), width(w)\n";
     int x, y, l, w;
     cin >> x >> y >> l >> w;    //entering the positions.
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
-                image[i][j][k] = 255;    //here I made the whole image white first.
-                if (i >= x && l + x > i && j >= y &&
-                    w + y > j)    //first&third conditions to make the image white tell i,j come to the x,y positions
-                    image[i][j][k] = image2[i][j][k];   // second & last conditions to end  putting the indices from image2 in image.
+                image[i][j][k] = 255;    //here i made the whole image white first.
+                if (i >= x && l + x > i && j >= y && w + y > j)    //first & third conditions to make the image white tell i,j come to the x,y positions
+                    image[i][j][k] = image2[i][j][k];   //second & last conditions to put the pixels from image2 in image.
             }
         }
     }
