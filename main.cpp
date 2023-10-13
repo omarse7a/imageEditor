@@ -457,15 +457,14 @@ void blur(){    //The blur filter takes the average of the 9 pixels and put it i
 
 //______________________________________________________________________
 void crop(){//here we crop part of the image and make the rest white.
-    cout<<"please enter x ,y ,l , w\n";
-    int x,y,l,w;
-    cin>>x>>y>>l>>w;//entering the positions.
+    cout << "Please enter x, y, l, w\n";
+    int x, y, l, w;
+    cin >> x >> y >> l >> w;    //entering the positions.
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            image[i][j]=255;//here I made the whole image white first.
-            if(i>=x&&l+x>i&&j>=y&&w+y>j)//first&third conditions to make the image white tell i,j come to the x,y positions
-                // second&last conditions to end  putting the indices from image2 in image.
-                image[i][j]=image2[i][j];
+            image[i][j]=255;    //here I made the whole image white first.
+            if(i>=x&&l+x>i&&j>=y&&w+y>j)    //first&third conditions to make the image white tell i,j come to the x,y positions
+                image[i][j]=image2[i][j];   // second & last conditions to end  putting the indices from image2 in image.
         }
     }
 }
