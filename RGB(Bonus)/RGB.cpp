@@ -9,16 +9,17 @@
 #include <iostream>
 #include <cstring>
 #include "bmplib.cpp"
-
+#include <algorithm>
 using namespace std;
 unsigned char image[SIZE][SIZE][RGB];
-
+unsigned char image2[SIZE][SIZE][RGB];
 void menu();
 void loadImage();
 void saveImage();
 void BW();
 void invert();
 void merge();
+void flip();
 
 int main()
 {
@@ -38,6 +39,8 @@ int main()
                 merge();
                 break;
             case '4':
+                flip();
+                break;
             case '5':
             case '6':
             case '7':
@@ -85,28 +88,30 @@ void menu(){
 
 //_________________________________________
 void loadImage () {
-   char imageFileName[100];
+    char imageFileName[100];
 
-   // Get gray scale image file name
-   cout << "Enter the image file name you want to edit: ";
-   cin >> imageFileName;
+    // Get gray scale image file name
+    cout << "Enter the image file name you want to edit: ";
+    cin >> imageFileName;
 
-   // Add to it .bmp extension and load image
-   strcat (imageFileName, ".bmp");
-   readRGBBMP(imageFileName, image);
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    readRGBBMP(imageFileName, image);
+    readRGBBMP(imageFileName, image2);
+
 }
 
 //_________________________________________
 void saveImage () {
-   char imageFileName[100];
+    char imageFileName[100];
 
-   // Get gray scale image target file name
-   cout << "Enter the target image file name: ";
-   cin >> imageFileName;
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
 
-   // Add to it .bmp extension and load image
-   strcat (imageFileName, ".bmp");
-   writeRGBBMP(imageFileName, image);
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, image);
 }
 
 //_________________________________________
@@ -138,7 +143,7 @@ void invert(){
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
-               image[i][j][k] = 255 - image[i][j][k];
+                image[i][j][k] = 255 - image[i][j][k];
             }
         }
     }
@@ -162,3 +167,20 @@ void merge(){
 }
 
 //_________________________________________
+void flip() { //This function flips the image horizontally or vertically
+    char dir;
+    cout << "Flip horizontally(h) or vertically(v)\n";
+    cin >> dir;
+    if (dir == 'h') {         //if the input is h it flips horizontally
+        reverse(begin(image), end(image)); //it reverses the whole 3D array
+    }
+    else if(dir == 'v'){        //if the input is v it flips vertically
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][j][k] = image2[i][SIZE-j-1][k];  //it reverses the columns of 3D array
+                }
+            }
+        }
+    }
+}
