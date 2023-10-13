@@ -20,7 +20,8 @@ void BW();
 void invert();
 void merge();
 void flip();
-
+void blur();
+void crop();
 int main()
 {
     cout << "Welcome to our image editing program\n";
@@ -49,7 +50,9 @@ int main()
             case 'a':
             case 'b':
             case 'c':
+                blur();
             case 'd':
+                crop();
             case 'e':
             case 'f':
             case 's':
@@ -180,6 +183,34 @@ void flip() { //This function flips the image horizontally or vertically
                 for (int k = 0; k < RGB; ++k) {
                     image[i][j][k] = image2[i][SIZE-j-1][k];  //it reverses the columns of 3D array
                 }
+            }
+        }
+    }
+}
+//___________________________________________
+void blur() {    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            for (int k = 0; k < RGB; ++k) {
+
+                image[i][j][k] = (image[i - 1][j][k]+ image[i + 1][j][k] + image[i][j - 1][k] + image[i][j + 1] [k]+ image[i][j][k]
+                                  + image[i - 2][j][k] + image[i + 2][j][k] + image[i][j - 2][k] + image[i][j + 2][k]) /9;
+            }
+        }
+    }
+}
+//_____________________________________________
+void crop() {
+    cout << "Please enter x, y, l, w\n";
+    int x, y, l, w;
+    cin >> x >> y >> l >> w;    //entering the positions.
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            for (int k = 0; k < RGB; ++k) {
+                image[i][j][k] = 255;    //here I made the whole image white first.
+                if (i >= x && l + x > i && j >= y &&
+                    w + y > j)    //first&third conditions to make the image white tell i,j come to the x,y positions
+                    image[i][j][k] = image2[i][j][k];   // second & last conditions to end  putting the indices from image2 in image.
             }
         }
     }
