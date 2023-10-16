@@ -352,6 +352,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     if(side == 'l'){
         for (int i = 0; i < SIZE; ++i) {        //we put the first half of the image in image1
             for (int j = 0; j < SIZE / 2; ++j) {    // then put the first half of the image again in the second half of image1.
+                image[i][j] = image2[i][j];
                 image[i][SIZE-j] = image2[i][j];
             }
         }
@@ -359,6 +360,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else if(side == 'r'){//Here we did the same thing, but in reverse.
         for (int i = 0; i < SIZE; ++i) {
             for (int j = SIZE/2; j < SIZE; ++j) {
+                image[i][j] = image2[i][j];
                 image[i][SIZE - j] = image2[i][j];
             }
         }
@@ -366,6 +368,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else if(side == 'u'){
         for (int i = 0; i < SIZE/2; ++i) {//here we need the upper half of i indices
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
+                image[i][j] = image2[i][j];//
                 image[SIZE-i] [j] = image2[i][j];
             }
         }
@@ -374,6 +377,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else
         for (int i = SIZE/2; i < SIZE; ++i) {//here we need the lower half of the image
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
+                image[i][j] = image2[i][j];
                 image[SIZE-i][j] = image2[i][j];
             }
         }
@@ -448,6 +452,7 @@ void shuffle(){     //shuffle function is used to display the image quarters in 
         pos++;
     }
 }
+
 //_________________________________________
 void blur(){    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
     for (int c = 0; c < 3; ++c) {
@@ -490,6 +495,7 @@ void skewRight(){
     }
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
+            cout << step << ' ';
             image[i][int(j*(x/SIZE)) + int(step)] = image2[i][j];   //using j*(x/SIZE) for shrinking the image to fit in x columns
         }                                                           //adding (step) to it to make a starting point for the pixels in each row
         step -= move; //decrementing step for each row
@@ -498,5 +504,23 @@ void skewRight(){
 
 //_________________________________________
 void skewUp(){
-
+    double degree, rad, x, move, step;
+    cout << "Enter the skewing degree\n";
+    cin >> degree;
+    rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
+    x = SIZE / (1 + 1/tan(rad));    //the dimension after shrinking
+    step = ceil(SIZE - x);      //the pixels starting point in each column
+    move = step/SIZE;     //the value of movement to the left in each row
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][j] = 255;      //making the primary image all white
+        }
+    }
+    for (int i = 0; i < SIZE; ++i) {
+        step = ceil(SIZE - x);
+        for (int j = 0; j < SIZE; ++j) {                        //using j*(x/SIZE) for shrinking the image to fit in x columns
+            image[int(i*(x/SIZE) + int(step))][j] = image2[i][j];   //adding (step) to it to make a starting point for the pixels in each row
+            step -= move;   //decrementing step for each row
+        }
+    }
 }
