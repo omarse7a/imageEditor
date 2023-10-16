@@ -30,9 +30,10 @@ void DL();
 void detectEdge();
 void enlarge();
 void shrink();
+void mirror();
+void shuffle();
 void blur();
 void crop();
-
 
 int main()
 {
@@ -70,7 +71,11 @@ int main()
                 shrink();
                 break;
             case 'a':
+                mirror();
+                break;
             case 'b':
+                shuffle();
+                break;
             case 'c':
                 blur();
                 break;
@@ -383,6 +388,115 @@ void shrink(){      //Shrink image by skipping pixels
         }
     }
 }
+//_______________________________________
+void mirror() {//This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
+    cout << "Mirror left(l), right(r), upper(u), down(d)\n";
+    char side;
+    cin >> side;
+    if (side == 'l') {
+        for (int i = 0; i < SIZE; ++i) {        //we put the first half of the image in image1
+            for (int j = 0;
+                 j < SIZE / 2; ++j) {// then put the first half of the image again in the second half of image1.
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][SIZE - j][k] = image2[i][j][k];
+                }
+            }
+        }
+    } else if (side == 'r') {//Here we did the same thing, but in reverse.
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = SIZE / 2; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    image[i][SIZE - j][k] = image2[i][j][k];
+                }
+            }
+        }
+    } else if (side == 'u') {
+        for (int i = 0; i < SIZE / 2; ++i) {//here we need the upper half of i indices
+            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
+                for (int k = 0; k < RGB; ++k) {
+                    image[SIZE - i][j][k] = image2[i][j][k];
+                }
+            }
+        }
+    } else
+        for (int i = SIZE / 2; i < SIZE; ++i) {//here we need the lower half of the image
+            for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
+                for (int k = 0; k < RGB; ++k) {
+                    image[SIZE - i][j][k] = image2[i][j][k];
+                }
+            }
+        }
+}
+//_______________________________________
+void shuffle(){     //shuffle function is used to display the image quarters in any order
+    int order, pos = 1;
+    cout << "Enter the new order of quarters?\n";
+    while(pos <= 4) {   //looping on every quarter
+        cin >> order;   //if the order is equal to pos, then leave the quarter as it is
+        if(pos == 1) { //first quarter
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    for (int k = 0; k < RGB; ++k) {
+                        if (order == 2) {
+                            image[i][j][k] = image2[i][SIZE / 2 +j][k];    //replacing the first quarter with the second
+                        } else if (order == 3) {
+                            image[i][j][k] = image2[SIZE / 2 + i][j][k];    //replacing the first quarter with the third
+                        } else if (order == 4) {
+                            image[i][j][k] = image2[SIZE / 2 + i][SIZE / 2 +j][k];   //replacing the first quarter with the fourth
+                        }
+                    }
+                }
+            }
+        }
+        else if(pos == 2) { //second quarter
+            for (int i = 0; i < SIZE / 2; ++i) {
+                for (int j = SIZE / 2; j < SIZE; ++j) {
+                    for (int k = 0; k < RGB; ++k) {
+                        if (order == 1) {
+                            image[i][j][k] = image2[i][j -
+                                                       SIZE / 2][k];    //replacing the second quarter with the first
+                        } else if (order == 3) {
+                            image[i][j][k] = image2[SIZE / 2 + i][j - SIZE /2][k];   //replacing the second quarter with the third
+                        } else if (order == 4) {
+                            image[i][j][k] = image2[SIZE / 2 +i][j][k];    //replacing the second quarter with the fourth
+                        }
+                    }
+                }
+            }
+        }
+        else if(pos == 3) {  //third quarter
+            for (int i = SIZE / 2; i < SIZE; ++i) {
+                for (int j = 0; j < SIZE / 2; ++j) {
+                    for (int k = 0; k < RGB; ++k) {
+                        if (order == 1) {
+                            image[i][j][k] = image2[i - SIZE / 2][j][k];    //replacing the third quarter with the first
+                        } else if (order == 2) {
+                            image[i][j][k] = image2[i - SIZE / 2][SIZE / 2 +j][k];   //replacing the third quarter with the second
+                        } else if (order == 4) {
+                            image[i][j][k] = image2[i][SIZE / 2 +j][k];    //replacing the third quarter with the fourth
+                        }
+                    }
+                }
+            }
+        }
+        else {   //fourth quarter
+            for (int i = SIZE / 2; i < SIZE; ++i) {
+                for (int j = SIZE / 2; j < SIZE; ++j) {
+                    for (int k = 0; k < RGB; ++k) {
+                        if (order == 1) {
+                            image[i][j][k] = image2[i - SIZE / 2][j - SIZE /2][k];   //replacing the fourth quarter with the first
+                        } else if (order == 2) {
+                            image[i][j][k] = image2[i - SIZE / 2][j][k];    //replacing the fourth quarter with the second
+                        } else if (order == 3) {
+                            image[i][j][k] = image2[i][j - SIZE / 2][k];    //replacing the fourth quarter with the third
+                        }
+                    }
+                }
+            }
+        }
+        pos++;
+    }
+}
 
 //_________________________________________
 void blur() {    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
@@ -413,3 +527,4 @@ void crop() {
         }
     }
 }
+//_______________________________________

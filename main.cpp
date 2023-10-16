@@ -448,7 +448,6 @@ void shuffle(){     //shuffle function is used to display the image quarters in 
         pos++;
     }
 }
-
 //_________________________________________
 void blur(){    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
     for (int c = 0; c < 3; ++c) {
