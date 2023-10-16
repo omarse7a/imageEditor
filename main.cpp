@@ -10,6 +10,7 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
+#include <cmath>
 #include "bmplib.cpp"
 
 using namespace std;
@@ -33,6 +34,8 @@ void mirror();
 void shuffle();
 void blur();
 void crop();
+void skewRight();
+void skewUp();
 
 int main()
 {
@@ -82,7 +85,11 @@ int main()
                 crop();
                 break;
             case 'e':
+                skewRight();
+                break;
             case 'f':
+                skewUp();
+                break;
             case 's':
                 saveImage();
                 break;
@@ -256,12 +263,13 @@ void DL(){      //This function manipulates the brightness
 
 //_________________________________________
 void detectEdge(){      //This function detect the edges of every object in the image
+    BW();   //make the image black and white to increase the brightness difference
     for (int i = 1; i < SIZE-1; ++i) {
         for (int j = 1; j < SIZE - 1; ++j) {
             int brightDiffX = abs(image[i][j] - image[i][j+1]); //the brightness difference on x-axis
             int brightDiffY = abs(image[i][j] - image[i+1][j]); //the brightness difference on y-axis
-            if (brightDiffX > 45 || brightDiffY > 45)   // checking if the pixel is an edge by brightness difference
-                image[i][j] = 0;                        //(45 is not a special number it just gives the best results)
+            if (brightDiffX > 30 || brightDiffY > 30)   // checking if the pixel is an edge by brightness difference
+                image[i][j] = 0;                        //(30 is not a special number it just gives the best results)
             else
                 image[i][j] = 255;
         }
@@ -375,7 +383,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
         }
 }
 
-//______________________________________________________________________
+//_________________________________________
 void shuffle(){     //shuffle function is used to display the image quarters in any order
     int order, pos = 1;
     cout << "Enter the new order of quarters?\n";
@@ -445,27 +453,52 @@ void shuffle(){     //shuffle function is used to display the image quarters in 
     }
 }
 
-//______________________________________________________________________
+//_________________________________________
 void blur(){    //The blur filter takes the average of the 9 pixels and put it in the middle pixel
-    for (int i = 0; i < SIZE; ++i) {
-        for (int j = 0; j < SIZE; ++j) {
-            image[i][j]=(image[i-1][j] + image[i+1][j] + image[i][j-1] + image[i][j+1] + image[i][j]
-                         + image[i-2][j] + image[i+2][j] + image[i][j-2] + image[i][j+2]) / 9;
+    for (int c = 0; c < 3; ++c) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                image[i][j]=(image[i-1][j] + image[i+1][j] + image[i][j-1] + image[i][j+1] + image[i][j]
+                             + image[i-2][j] + image[i+2][j] + image[i][j-2] + image[i][j+2]) / 9;
+            }
         }
     }
 }
 
-//______________________________________________________________________
-void crop(){//here we crop part of the image and make the rest white.
-    cout << "Please enter x, y, l, w\n";
+//_________________________________________
+void crop(){    //here we crop part of the image and make the rest white.
+    cout << "Please enter coordinates (x, y) and length(l), width(w)\n";
     int x, y, l, w;
     cin >> x >> y >> l >> w;    //entering the positions.
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             image[i][j]=255;    //here I made the whole image white first.
-            if(i >= x && l+x > i && j >= y && w+y > j)    //first&third conditions to make the image white tell i,j come to the x,y positions
+            if(i >= x && l+x > i && j >= y && w+y > j)    //first & third conditions to make the image white tell i,j come to the x,y positions
                 image[i][j]=image2[i][j];   //second & last conditions to put the pixels from image2 in image.
         }
     }
 }
-//______________________________________________________
+
+//_________________________________________
+void skewRight(){
+    double degree, rad, x, move, step;
+    cout << "Enter the skewing degree\n";
+    cin >> degree;
+    rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
+    x = SIZE / (1 + 1/tan(rad));    //the dimension after shrinking
+    step = ceil(SIZE - x);      //the pixels starting point in each row
+    move = step/SIZE;     //the value of movement to the left in each row
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][j] = 255;      //making the primary image all white
+        }
+    }
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image[i][int(j*(x/SIZE)) + int(step)] = image2[i][j];   //using j*(x/SIZE) for shrinking the image to fit in x columns
+        }                                                           //adding (step) to it to make a starting point for the pixels in each row
+        step -= move; //decrementing step for each row
+    }
+}
+
+//_________________________________________
