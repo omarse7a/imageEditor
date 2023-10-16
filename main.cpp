@@ -352,7 +352,6 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     if(side == 'l'){
         for (int i = 0; i < SIZE; ++i) {        //we put the first half of the image in image1
             for (int j = 0; j < SIZE / 2; ++j) {    // then put the first half of the image again in the second half of image1.
-                image[i][j] = image2[i][j];
                 image[i][SIZE-j] = image2[i][j];
             }
         }
@@ -360,7 +359,6 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else if(side == 'r'){//Here we did the same thing, but in reverse.
         for (int i = 0; i < SIZE; ++i) {
             for (int j = SIZE/2; j < SIZE; ++j) {
-                image[i][j] = image2[i][j];
                 image[i][SIZE - j] = image2[i][j];
             }
         }
@@ -368,7 +366,6 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else if(side == 'u'){
         for (int i = 0; i < SIZE/2; ++i) {//here we need the upper half of i indices
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
-                image[i][j] = image2[i][j];//
                 image[SIZE-i] [j] = image2[i][j];
             }
         }
@@ -377,7 +374,6 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
     else
         for (int i = SIZE/2; i < SIZE; ++i) {//here we need the lower half of the image
             for (int j = 0; j < SIZE; ++j) {//and we put that in reverse in the second half of the image
-                image[i][j] = image2[i][j];
                 image[SIZE-i][j] = image2[i][j];
             }
         }
@@ -502,3 +498,6 @@ void skewRight(){
 }
 
 //_________________________________________
+void skewUp(){
+
+}
