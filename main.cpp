@@ -263,10 +263,7 @@ void DL(){      //This function manipulates the brightness
     else if(brightness == 'l'){     //if 150% of the original brightness > white(255) make it white
         for (int i = 0; i < SIZE; ++i) {    // else increase the brightness by 50%
             for (int j = 0; j < SIZE; ++j) {
-                if(1.5*image[i][j] < 255)
-                    image[i][j] += image[i][j]/2;
-                else
-                    image[i][j] = 255;
+                    image[i][j] =(255+image[i][j])*0.5;
             }
         }
     }
