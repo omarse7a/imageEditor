@@ -1,6 +1,6 @@
 // FCAI – OOP Programming – 2023 - Assignment 1
 // Program Name: Image Editor
-// Last Modification Date:	7/10/2023
+// Last Modification Date:	18/10/2023
 // Author1 and ID and Group:	Omar Sameh Mohamed / 20220224 / omar.seha90@gmail.com
 // Author2 and ID and Group:	Mohamed Hisham Zidan / 20220310 / mohamedzidan783@gmail.com
 // Author3 and ID and Group:	Seif Eldin Ahmed Elkammar / 20220468 / seif_elkammar@hotmail.com
@@ -20,6 +20,7 @@ unsigned char image2[SIZE][SIZE];   //spare image(for editing)
 
 void menu();
 void loadImage();
+void copyImage();   //utility function
 void saveImage();
 void BW();
 void invert();
@@ -131,7 +132,15 @@ void loadImage(){   //This function is used to load the primary image and a spar
     cin >> imageFileName;
     strcat (imageFileName, ".bmp");
     readGSBMP(imageFileName, image);
-    readGSBMP(imageFileName, image2);
+}
+
+//_________________________________________
+void copyImage(){
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            image2[i][j] = image[i][j];
+        }
+    }
 }
 
 //_________________________________________
@@ -189,6 +198,7 @@ void mergeImage(){      //This function merges two images together
 
 //_________________________________________
 void flip(){        //This function flips the image horizontally or vertically
+    copyImage();
     char dir;
     cout << "Flip horizontally(h) or vertically(v)\n";
     cin >> dir;
@@ -211,6 +221,7 @@ void flip(){        //This function flips the image horizontally or vertically
 
 //_________________________________________
 void rotateImage(){ //This function rotates the image by a given degrees
+    copyImage();
     int degree;
     cout << "Rotate (90), (180) or (270) degrees\n";
     cin >> degree;
@@ -278,6 +289,7 @@ void detectEdge(){      //This function detect the edges of every object in the 
 
 //_________________________________________
 void enlarge(){     //Enlarge the pixel by repeating it four times in the image array
+    copyImage();
     int quarter;
     cout << "Select a quarter to enlarge first(1), second(2), third(3), fourth(4)\n";
     cin >> quarter;
@@ -313,6 +325,7 @@ void enlarge(){     //Enlarge the pixel by repeating it four times in the image 
 
 //_________________________________________
 void shrink(){      //Shrink image by skipping pixels
+    copyImage();
     int scale;
     cout << "Shrink to half(1), third(2) or quarter(3) it's original dimensions?\n";
     cin >> scale;
@@ -346,6 +359,7 @@ void shrink(){      //Shrink image by skipping pixels
 
 //_________________________________________
 void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Left 1/2, Right 1/2, Upper 1/2 and Lower 1/2.
+    copyImage();
     cout << "Mirror left(l), right(r), upper(u), down(d)\n";
     char side;
     cin >> side;
@@ -385,6 +399,7 @@ void mirror(){  //This filter mirrors 1/2 of the image as seen here in order: Le
 
 //_________________________________________
 void shuffle(){     //shuffle function is used to display the image quarters in any order
+    copyImage();
     int order, pos = 1;
     cout << "Enter the new order of quarters?\n";
     while(pos <= 4) {   //looping on every quarter
@@ -467,6 +482,7 @@ void blur(){    //The blur filter takes the average of the 9 pixels and put it i
 
 //_________________________________________
 void crop(){    //here we crop part of the image and make the rest white.
+    copyImage();
     cout << "Please enter coordinates (x, y) and length(l), width(w)\n";
     int x, y, l, w;
     cin >> x >> y >> l >> w;    //entering the positions.
@@ -481,11 +497,12 @@ void crop(){    //here we crop part of the image and make the rest white.
 
 //_________________________________________
 void skewRight(){
+    copyImage();
     double degree, rad, x, move, step;
     cout << "Enter the skewing degree\n";
     cin >> degree;
     rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
-    x = SIZE / (1 + 1/tan(rad));    //the dimension after shrinking
+    x = SIZE / (1 + 1/tan(rad));    //the dimension(columns) after shrinking
     step = ceil(SIZE - x);      //the pixels starting point in each row
     move = step/SIZE;     //the value of movement to the left in each row
     for (int i = 0; i < SIZE; ++i) {
@@ -495,7 +512,6 @@ void skewRight(){
     }
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            cout << step << ' ';
             image[i][int(j*(x/SIZE)) + int(step)] = image2[i][j];   //using j*(x/SIZE) for shrinking the image to fit in x columns
         }                                                           //adding (step) to it to make a starting point for the pixels in each row
         step -= move; //decrementing step for each row
@@ -504,13 +520,14 @@ void skewRight(){
 
 //_________________________________________
 void skewUp(){
+    copyImage();
     double degree, rad, x, move, step;
     cout << "Enter the skewing degree\n";
     cin >> degree;
     rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
-    x = SIZE / (1 + 1/tan(rad));    //the dimension after shrinking
+    x = SIZE / (1 + 1/tan(rad));    //the dimension(rows) after shrinking
     step = ceil(SIZE - x);      //the pixels starting point in each column
-    move = step/SIZE;     //the value of movement to the left in each row
+    move = step/SIZE;     //the value of movement up in each column
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             image[i][j] = 255;      //making the primary image all white
@@ -518,9 +535,9 @@ void skewUp(){
     }
     for (int i = 0; i < SIZE; ++i) {
         step = ceil(SIZE - x);
-        for (int j = 0; j < SIZE; ++j) {                        //using j*(x/SIZE) for shrinking the image to fit in x columns
-            image[int(i*(x/SIZE) + int(step))][j] = image2[i][j];   //adding (step) to it to make a starting point for the pixels in each row
-            step -= move;   //decrementing step for each row
+        for (int j = 0; j < SIZE; ++j) {                        //using i*(x/SIZE) for shrinking the image to fit in x rows
+            image[int(i*(x/SIZE) + int(step))][j] = image2[i][j];   //adding (step) to it to make a starting point for the pixels in each column
+            step -= move;   //decrementing step for each column
         }
     }
 }
