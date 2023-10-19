@@ -136,8 +136,8 @@ void loadImage(){   //This function is used to load the primary RGB image and a 
 }
 
 //_________________________________________
-void copyImage(){
-    for (int i = 0; i < SIZE; ++i) {
+void copyImage(){               //This function is used to copy the contents of image(array) to image2(array)
+    for (int i = 0; i < SIZE; ++i) {    //used to implement some filters
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
                 image2[i][j][k] = image[i][j][k];
@@ -157,24 +157,24 @@ void saveImage(){   //This function is used to save the RGB image after implemen
 }
 
 //_________________________________________
-void BW() {
+void BW() {     //This function turns the RGB image to the black & white version
     int sum, avg;
     for(int i = 0; i < SIZE; i++) {
         for(int j = 0; j < SIZE; j++) {
             sum = 0;
-            for (int k = 0; k < RGB; ++k) {
-                sum += image[i][j][k];
+            for (int k = 0; k < RGB; ++k) { //looping to find the average color of each pixel
+                sum += image[i][j][k];  //sum of colors in each pixel
             }
-            avg = sum/RGB;
+            avg = sum/RGB;  //calculating the average
             if(avg < 128) {
                 for (int k = 0; k < RGB; ++k) {
-                    image[i][j][k] = 0;
-                }
+                    image[i][j][k] = 0; //turn the pixel to black if the average color is less than 128
+                }                       //for each pixel
             }
             else{
                 for (int k = 0; k < RGB; ++k) {
-                    image[i][j][k] = 255;
-                }
+                    image[i][j][k] = 255;   //turn the pixel to white if the average color is greater than 128
+                }                           //for each pixel
             }
         }
     }
@@ -185,7 +185,7 @@ void invert(){  //This function invert the brightness of each pixel
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
-                image[i][j][k] = 255 - image[i][j][k]; //invert each color pixel
+                image[i][j][k] = 255 - image[i][j][k]; //invert each color in a pixel
             }
         }
     }
@@ -202,7 +202,7 @@ void mergeImage(){      //This function merges two images together
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
-                image[i][j][k] = (image[i][j][k] + imageMrg[i][j][k]) / 2;  //calculating the average brightness of the two images
+                image[i][j][k] = (image[i][j][k] + imageMrg[i][j][k]) / 2;  //replacing each pixel with the average brightness of the two images
             }
         }
     }
@@ -281,10 +281,7 @@ void DL(){      //This function manipulates the brightness
         for (int i = 0; i < SIZE; ++i) {    // else increase the brightness by 50%
             for (int j = 0; j < SIZE; ++j) {
                 for (int k = 0; k < RGB; ++k) {
-                    if(1.5*image[i][j][k] < 255)
-                        image[i][j][k] += image[i][j][k] / 2;
-                    else
-                        image[i][j][k] = 255;
+                    image[i][j][k] =(255+image[i][j][k])*0.5;
                 }
             }
         }
@@ -537,7 +534,7 @@ void blur() {    //The blur filter takes the average of the 9 pixels and put it 
 }
 
 //_________________________________________
-void crop() {
+void crop() {   //here we crop part of the image and make the rest white.
     copyImage();
     cout << "Please enter coordinates (x, y) and length(l), width(w)\n";
     int x, y, l, w;
@@ -553,7 +550,7 @@ void crop() {
     }
 }
 //_______________________________________
-void skewRight(){
+void skewRight(){       //Skewing the image vertically  by the given angle
     copyImage();
     double degree, rad, x, move, step;
     cout << "Enter the skewing degree\n";
@@ -580,7 +577,7 @@ void skewRight(){
 }
 
 //_________________________________________
-void skewUp(){
+void skewUp(){      //Skewing the image horizontally by the given angle
     copyImage();
     double degree, rad, x, move, step;
     cout << "Enter the skewing degree\n";

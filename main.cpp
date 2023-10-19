@@ -131,12 +131,12 @@ void loadImage(){   //This function is used to load the primary image and a spar
     cout << "Enter the image file name you want to edit: ";
     cin >> imageFileName;
     strcat (imageFileName, ".bmp");
-    readGSBMP(imageFileName, image);
+    readGSBMP(imageFileName, image);    //load the image into a 2D array
 }
 
 //_________________________________________
-void copyImage(){
-    for (int i = 0; i < SIZE; ++i) {
+void copyImage(){       //This function is used to copy the contents of image(array) to image2
+    for (int i = 0; i < SIZE; ++i) {    //used to implement some filters
         for (int j = 0; j < SIZE; ++j) {
             image2[i][j] = image[i][j];
         }
@@ -149,7 +149,7 @@ void saveImage(){   //This function is used to save the image after implementing
     cout << "Enter the target image file name: ";
     cin >> imageFileName;
     strcat (imageFileName, ".bmp");
-    writeGSBMP(imageFileName, image);
+    writeGSBMP(imageFileName, image);   //save the 2D array into an image
     cout << "Save successfully\n";
 }
 
@@ -158,16 +158,16 @@ void BW(){      //This function turns the image to black&white version
     int sum = 0, avg;
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++) {
-            sum += image[i][j];
+            sum += image[i][j];     //looping to get the sum of all pixels
         }
     }
     avg = sum/(SIZE*SIZE);      //calculating the average brightness of the pixels
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j< SIZE; j++){
             if(image[i][j] > avg)
-                image[i][j] = 255;
+                image[i][j] = 255;  //turning the pixel to white
             else
-                image[i][j] = 0;
+                image[i][j] = 0;    //turning the pixel to black
         }
     }
 }
@@ -176,7 +176,7 @@ void BW(){      //This function turns the image to black&white version
 void invert(){      //This function invert the brightness of each pixel
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            image[i][j] = 255 - image[i][j];
+            image[i][j] = 255 - image[i][j];   //looping on each pixel replacing its color by the inverse
         }
     }
 }
@@ -191,7 +191,7 @@ void mergeImage(){      //This function merges two images together
     readGSBMP(imageFileName, imageMerge); //loading another image for the merge
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
-            image[i][j] = (image[i][j] + imageMerge[i][j])/2; //calculating the average brightness of the two images
+            image[i][j] = (image[i][j] + imageMerge[i][j])/2; //replacing each pixel with the average brightness of the two images
         }
     }
 }
@@ -213,8 +213,8 @@ void flip(){        //This function flips the image horizontally or vertically
         }
     }
     else{
-        cout << "Invalid input!\n";
-        flip();
+        cout << "Invalid input!\n"; //in case the input is not one of the choices
+        flip();               //call the function again
         return;
     }
 }
@@ -263,7 +263,7 @@ void DL(){      //This function manipulates the brightness
     else if(brightness == 'l'){     //if 150% of the original brightness > white(255) make it white
         for (int i = 0; i < SIZE; ++i) {    // else increase the brightness by 50%
             for (int j = 0; j < SIZE; ++j) {
-                    image[i][j] =(255+image[i][j])*0.5;
+                image[i][j] =(255+image[i][j])*0.5;
             }
         }
     }
@@ -493,10 +493,10 @@ void crop(){    //here we crop part of the image and make the rest white.
 }
 
 //_________________________________________
-void skewRight(){
+void skewRight(){   //Skewing the image vertically  by the given angle
     copyImage();
     double degree, rad, x, move, step;
-    cout << "Enter the skewing degree\n";
+    cout << "Enter the skewing angle\n";
     cin >> degree;
     rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
     x = SIZE / (1 + 1/tan(rad));    //the dimension(columns) after shrinking
@@ -516,10 +516,10 @@ void skewRight(){
 }
 
 //_________________________________________
-void skewUp(){
+void skewUp(){      //Skewing the image horizontally by the given angle
     copyImage();
     double degree, rad, x, move, step;
-    cout << "Enter the skewing degree\n";
+    cout << "Enter the skewing angle\n";
     cin >> degree;
     rad = (degree*(22.0/7.0)) /180.0; //calculating the angle in radian
     x = SIZE / (1 + 1/tan(rad));    //the dimension(rows) after shrinking
